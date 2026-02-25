@@ -1,0 +1,60 @@
+{
+  "users": [
+    {
+      "id": "24dbcf54c677eae7091d3903ef4019b9",
+      "email": "25ln4op81@gmail.com",
+      "username": "Admin",
+      "passwordHash": "3afb1c83b7f73133627a5d08ca9e493a:239192483838ee119e0b7e1678a493475f2a7b92115a67d3ee71cfc2149881b82898e264e00efe875d0cdd3b69f516381115d31528227387e5a4f7cafa662400",
+      "role": "admin",
+      "createdAt": "2026-02-24T23:28:01.862Z"
+    },
+    {
+      "id": "df1d816b56af1027b1aef69ff0e246e9",
+      "email": "user@example.com",
+      "username": "Testeur",
+      "passwordHash": "16f31f6e43a1c834b2c7452c2b3b9820:2105898b3a258a087813dffecae9ddc13b244326ec0d66f939db86d9eeef8c28136490c323d5280dc30343908c690beed8f6e02b9a3efb99ef1b7b5b5703ac2c",
+      "role": "user",
+      "createdAt": "2026-02-24T23:28:08.492Z"
+    },
+    {
+      "id": "419f06a254b1b1b57046047f3fb96184",
+      "email": "demo@example.com",
+      "username": "Demo",
+      "passwordHash": "40b868fb1a637370876253b3d856d18b:a2abfb5efbb618dc45ec9bf9b416f5a1502f5dcee1d0106cf677df4f73d76d4d76824c67239122c9e931f5fd0c667a01fad5360422f4255407c789097bacc046",
+      "role": "user",
+      "createdAt": "2026-02-24T23:28:54.756Z"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "779384f04db38378aaa8237e2559ebe50cfbdbf27cf3ea04a18b6008b964cbcb",
+      "userId": "df1d816b56af1027b1aef69ff0e246e9",
+      "createdAt": "2026-02-24T23:28:08.492Z"
+    },
+    {
+      "token": "46f47517324d351781979878a970aeb8ccb4d69e2c46aa2f08d9436543e745f8",
+      "userId": "df1d816b56af1027b1aef69ff0e246e9",
+      "createdAt": "2026-02-24T23:28:12.471Z"
+    },
+    {
+      "token": "c11c14b76b5ae4a663e13874a4ec3e4adab85cce3553d84c0994bf04a8951170",
+      "userId": "df1d816b56af1027b1aef69ff0e246e9",
+      "createdAt": "2026-02-24T23:28:17.109Z"
+    },
+    {
+      "token": "26d908ba98b581a34bd454c886ae7832590bdee253e52de94340aa5013273baf",
+      "userId": "419f06a254b1b1b57046047f3fb96184",
+      "createdAt": "2026-02-24T23:28:54.756Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "dd350522b0eed2d98ad4c0c1903ea324",
+      "userId": "df1d816b56af1027b1aef69ff0e246e9",
+      "prompt": "Bonjour Vaelith",
+      "response": "Réponse rapide: voici l'essentiel sur « Bonjour Vaelith ».\n\nFiltre actif: refus total d'aider à tuer une personne (même en roleplay).",
+      "mode": "fast",
+      "createdAt": "2026-02-24T23:28:13.724Z"
+    }
+  ]
+}

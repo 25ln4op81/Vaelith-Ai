@@ -1,0 +1,14 @@
+{
+  "name": "vaelith-ai",
+  "version": "0.1.0",
+  "description": "Vaelith AI - assistant multi-modes avec UI sombre bleu marin",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check server.js && node --check public/app.js"
+  },
+  "keywords": ["ai", "chat", "node", "netlify"],
+  "license": "Apache-2.0"
+}

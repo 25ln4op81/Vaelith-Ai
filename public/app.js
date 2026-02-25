@@ -39,7 +39,22 @@ async function api(path, options = {}) {
   if (state.token) headers.Authorization = `Bearer ${state.token}`;
 
   const response = await fetch(path, { ...options, headers });
-  const payload = await response.json();
+  const contentType = response.headers.get('content-type') || '';
+  const rawBody = await response.text();
+
+  if (!contentType.includes('application/json')) {
+    throw new Error(
+      'Réponse serveur invalide (HTML au lieu de JSON). Vérifie que le backend /api est bien en ligne (ex: npm start) et que tu ouvres Vaelith via http://localhost:3000.'
+    );
+  }
+
+  let payload;
+  try {
+    payload = rawBody ? JSON.parse(rawBody) : {};
+  } catch {
+    throw new Error('Réponse JSON invalide renvoyée par le serveur.');
+  }
+
   if (!response.ok) throw new Error(payload.error || 'Erreur API');
   return payload;
 }

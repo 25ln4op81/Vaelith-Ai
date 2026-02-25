@@ -64,3 +64,27 @@ Ce dépôt est prêt pour un MVP local. Pour un déploiement Netlify production 
 ## Licence
 
 Apache License 2.0.
+
+
+## Dépannage connexion admin
+
+### Erreur: `Unexpected token '<', "<!DOCTYPE ..." is not valid JSON`
+
+Cette erreur signifie que le front attend du JSON sur `/api/*`, mais reçoit une page HTML (souvent l'`index.html`).
+
+Ca arrive en général si:
+- le backend Node n'est pas démarré,
+- ou l'UI est ouverte sans le serveur API,
+- ou la config d'hébergement redirige mal `/api`.
+
+Correctif rapide local:
+
+```bash
+cp .env.example .env
+npm start
+```
+
+Puis ouvre **exactement** `http://localhost:3000` (pas le fichier HTML en direct).
+
+En hébergement (ex: Netlify), il faut router `/api/*` vers un backend/fonctions serverless, sinon le front reçoit de l'HTML au lieu du JSON.
+

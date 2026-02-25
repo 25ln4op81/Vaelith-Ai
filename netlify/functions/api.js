@@ -118,6 +118,25 @@ function json(statusCode, payload) {
   };
 }
 
+
+function resolveRoute(event) {
+  const queryPath = event.queryStringParameters?.path;
+  if (queryPath) {
+    return `/${queryPath}`
+      .replace(/\/+/g, '/')
+      .replace(/^\/api(?=\/|$)/, '') || '/';
+  }
+
+  const rawPath = event.path || event.rawUrl || '';
+  const withoutFnPrefix = rawPath
+    .replace(/^https?:\/\/[^/]+/, '')
+    .replace(/^\/.netlify\/functions\/api/, '');
+
+  return (withoutFnPrefix || '/')
+    .replace(/\/+/g, '/')
+    .replace(/^\/api(?=\/|$)/, '') || '/';
+}
+
 function parseBody(event) {
   if (!event.body) return {};
   try {
@@ -128,7 +147,7 @@ function parseBody(event) {
 }
 
 exports.handler = async (event) => {
-  const route = `/${event.queryStringParameters?.path || ''}`.replace(/\/+/g, '/');
+  const route = resolveRoute(event);
   const method = event.httpMethod;
 
   const db = loadDb();

@@ -84,11 +84,14 @@ Cette erreur signifie que le front attend du JSON sur `/api/*`, mais reçoit une
 Ca arrive en général si:
 - tu ouvres la mauvaise URL (`.../public/` au lieu de la racine),
 - ou les redirects/fonctions Netlify ne sont pas actifs,
+- ou une ancienne config de redirect envoie un mauvais chemin API (ca produit `Route introuvable`),
 - ou le backend local n'est pas démarré.
 
 Correctif:
 - Netlify: ouvre l'URL racine du site.
 - Local: `npm start`, puis `http://localhost:3000`.
+
+Si tu vois `Route introuvable` sur Netlify, redeploie après pull de cette version (routing `/api/*` corrigé).
 
 ## Licence
 

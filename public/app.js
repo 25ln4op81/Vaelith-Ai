@@ -44,7 +44,7 @@ async function api(path, options = {}) {
 
   if (!contentType.includes('application/json')) {
     throw new Error(
-      'Réponse serveur invalide (HTML au lieu de JSON). Vérifie que le backend /api est bien en ligne (ex: npm start) et que tu ouvres Vaelith via http://localhost:3000.'
+      "Réponse serveur invalide (HTML au lieu de JSON). Ouvre Vaelith depuis l'URL racine du site (pas /public/) et vérifie que /api est bien configuré."
     );
   }
 

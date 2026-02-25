@@ -46,45 +46,50 @@ ADMIN_PASSWORD=ChangeThisPassword!
 - `PATCH /api/me` : changer pseudo/mot de passe
 - `PATCH /api/admin/email` : changer l'email admin (token admin requis)
 - `POST /api/chat` : envoi de message avec `mode`
+- `GET /api/health` : santé API
 
 ## Sécurité demandée
 
 - Tous les comptes non-admin sont bloqués si le prompt tente d'obtenir de l'aide pour tuer/blesser quelqu'un, y compris en roleplay.
 - Le compte admin n'est pas filtré (comme demandé).
 
-## Netlify (cible d'hébergement)
+## Netlify (option la plus simple)
 
-Ce dépôt est prêt pour un MVP local. Pour un déploiement Netlify production :
+Le repo est maintenant compatible Netlify avec une **Function** (`netlify/functions/api.js`) + un routage `/api/*` via `netlify.toml`.
 
-1. Déplacer l'API Express vers des **Netlify Functions** (ou un backend séparé).
-2. Utiliser **Netlify Identity** + base de données (Supabase/Neon/Fauna) pour la gestion de comptes à grande échelle.
-3. Remplacer la logique de réponse simulée par un provider LLM (OpenAI/Anthropic/etc.).
-4. Brancher le mode recherche sur une API web search (Tavily/SerpAPI/Brave Search).
+### Déploiement pas-à-pas (débutant)
 
-## Licence
+1. Pousse le repo sur GitHub.
+2. Sur Netlify: **Add new project** → **Import from Git**.
+3. Dans les settings build:
+   - Publish directory: `public`
+   - Functions directory: `netlify/functions`
+4. Variables d'environnement Netlify (Site configuration → Environment variables):
+   - `ADMIN_EMAIL`
+   - `ADMIN_USERNAME`
+   - `ADMIN_PASSWORD`
+5. Deploy.
+6. Ouvre l'URL **racine** du site (ex: `https://ton-site.netlify.app/`) et **pas** `/public/`.
 
-Apache License 2.0.
+### Important (MVP)
 
+La fonction utilise un stockage fichier temporaire (`/tmp`) compatible démo, mais non durable long terme. Pour la production, branche une vraie base (Supabase/Neon/etc.).
 
 ## Dépannage connexion admin
 
 ### Erreur: `Unexpected token '<', "<!DOCTYPE ..." is not valid JSON`
 
-Cette erreur signifie que le front attend du JSON sur `/api/*`, mais reçoit une page HTML (souvent l'`index.html`).
+Cette erreur signifie que le front attend du JSON sur `/api/*`, mais reçoit une page HTML.
 
 Ca arrive en général si:
-- le backend Node n'est pas démarré,
-- ou l'UI est ouverte sans le serveur API,
-- ou la config d'hébergement redirige mal `/api`.
+- tu ouvres la mauvaise URL (`.../public/` au lieu de la racine),
+- ou les redirects/fonctions Netlify ne sont pas actifs,
+- ou le backend local n'est pas démarré.
 
-Correctif rapide local:
+Correctif:
+- Netlify: ouvre l'URL racine du site.
+- Local: `npm start`, puis `http://localhost:3000`.
 
-```bash
-cp .env.example .env
-npm start
-```
+## Licence
 
-Puis ouvre **exactement** `http://localhost:3000` (pas le fichier HTML en direct).
-
-En hébergement (ex: Netlify), il faut router `/api/*` vers un backend/fonctions serverless, sinon le front reçoit de l'HTML au lieu du JSON.
-
+Apache License 2.0.

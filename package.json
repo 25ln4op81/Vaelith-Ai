@@ -7,8 +7,13 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "check": "node --check server.js && node --check public/app.js"
+    "check": "node --check server.js && node --check public/app.js && node --check netlify/functions/api.js"
   },
-  "keywords": ["ai", "chat", "node", "netlify"],
+  "keywords": [
+    "ai",
+    "chat",
+    "node",
+    "netlify"
+  ],
   "license": "Apache-2.0"
 }

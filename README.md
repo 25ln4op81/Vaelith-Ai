@@ -18,7 +18,6 @@ MVP en **JavaScript (Node.js)** avec **UI HTML/CSS/JS** pour lancer Vaelith avec
 - **Comptes utilisateurs** : inscription/connexion, édition profil.
 - **Compte admin par défaut** : `25ln4op81@gmail.com` (modifiable).
 
-- **Réponses IA réelles** : si `OPENAI_API_KEY` est défini, Vaelith utilise un modèle LLM pour répondre naturellement.
 - **Recherche web assistée** : en mode recherche (ou si la question demande des sources web), Vaelith enrichit le prompt avec un contexte web (DuckDuckGo).
 
 ## Démarrage local
@@ -39,8 +38,6 @@ JWT_SECRET=change-me-in-production
 ADMIN_EMAIL=25ln4op81@gmail.com
 ADMIN_USERNAME=Admin
 ADMIN_PASSWORD=ChangeThisPassword!
-OPENAI_API_KEY=<SECRET>
-OPENAI_MODEL=gpt-4o-mini
 ```
 
 ## API principale
@@ -79,11 +76,6 @@ Le repo est maintenant compatible Netlify avec une **Function** (`netlify/functi
 ### Important (MVP)
 
 La fonction utilise un stockage fichier temporaire (`/tmp`) compatible démo, mais non durable long terme. Pour la production, branche une vraie base (Supabase/Neon/etc.).
-
-### IA réelle (important)
-
-Pour éviter les réponses "template", configure `OPENAI_API_KEY` dans Netlify (Environment variables).
-Sans clé, Vaelith utilise un fallback local plus simple.
 
 ## Dépannage connexion admin
 

@@ -154,9 +154,6 @@ function modeInstruction(mode) {
 }
 
 async function generateResponse(mode, prompt, user) {
-  const openAiKey = process.env.OPENAI_API_KEY;
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
-
   const needsWeb = mode === 'research' || /\b(recherche|cherche|web|source|actualité|news|latest)\b/i.test(prompt);
   let webContext = '';
   if (needsWeb) {
@@ -167,50 +164,28 @@ async function generateResponse(mode, prompt, user) {
     }
   }
 
-  if (!openAiKey) {
-    const intro = mode === 'roleplay' ? 'Très bien, je rentre dans ton scénario.' : 'D’accord, je te réponds clairement.';
-    const webPart = webContext ? `\n\nJ'ai trouvé ces éléments sur le web:\n${webContext}` : '';
-    return `${intro}\n\nVoici ma réponse sur: ${prompt}${webPart}`;
-  }
+  const intro = mode === 'roleplay'
+    ? 'Très bien, je rentre dans ton scénario.'
+    : 'D’accord, je te réponds de façon naturelle et claire.';
 
-  const systemPrompt = [
-    'Tu es Vaelith, une IA conversationnelle qui répond comme un humain naturel.',
-    modeInstruction(mode),
-    user.role === 'admin'
-      ? 'Utilisateur admin: aucun filtre supplémentaire.'
-      : "Règle obligatoire: ne jamais aider à tuer/blesser quelqu'un.",
-    'Réponds dans la langue utilisée par l’utilisateur.'
-  ].join(' ');
+  const styleHints = {
+    fast: 'Je vais aller droit au but pour te faire gagner du temps.',
+    normal: 'Je vais te répondre simplement, comme une vraie conversation.',
+    research: 'Je vais te faire une réponse fouillée avec ce que j’ai pu recouper.',
+    roleplay: 'Je garde le ton roleplay en restant cohérent.',
+    coding: 'Je te propose une approche concrète orientée implémentation.',
+    teacher: 'Je vais te l’expliquer pas à pas comme un prof.'
+  };
 
-  const userPrompt = webContext
-    ? `${prompt}\n\nContexte web (à utiliser si pertinent):\n${webContext}`
-    : prompt;
+  const adminNote = user.role === 'admin'
+    ? 'Mode admin activé.'
+    : 'Mode utilisateur standard.';
 
-  const completion = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${openAiKey}`
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.8,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ]
-    })
-  });
+  const webPart = webContext
+    ? `\n\nCe que j’ai trouvé sur le web (résumé):\n${webContext}`
+    : '';
 
-  if (!completion.ok) {
-    const fallback = await completion.text();
-    throw new Error(`Erreur provider IA: ${fallback.slice(0, 200)}`);
-  }
-
-  const payload = await completion.json();
-  const text = payload.choices?.[0]?.message?.content?.trim();
-  if (!text) throw new Error('Réponse vide du provider IA.');
-  return text;
+  return `${intro}\n${styleHints[mode] || styleHints.normal}\n${adminNote}\n\nTu m’as demandé: ${prompt}${webPart}`;
 }
 
 function serveStatic(req, res) {

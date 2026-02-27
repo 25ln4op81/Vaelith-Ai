@@ -157,7 +157,8 @@ el.chatForm.addEventListener('submit', async (event) => {
     });
 
     const elapsed = ((Date.now() - start) / 1000).toFixed(1);
-    addMessage(`[${data.modeLabel}] ${data.response}\n(temps: ${elapsed}s)`, 'ai');
+    const responseText = `${data.response}\n\n(Mode: ${data.modeLabel} • ${elapsed}s)`;
+    addMessage(responseText, 'ai');
   } catch (error) {
     addMessage(error.message, 'ai');
   }

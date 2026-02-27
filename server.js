@@ -117,21 +117,100 @@ function isUnsafe(text) {
   return blockedPatterns.some((re) => re.test(text));
 }
 
-function generateResponse(mode, prompt, user) {
-  const safeNote = user.role === 'admin'
-    ? "Mode admin: aucun filtre de contenu n'est appliqué."
-    : "Filtre actif: refus total d'aider à tuer une personne (même en roleplay).";
+async function searchWebContext(prompt) {
+  const endpoint = `https://api.duckduckgo.com/?q=${encodeURIComponent(prompt)}&format=json&no_html=1&no_redirect=1`;
+  const response = await fetch(endpoint, { headers: { 'user-agent': 'Vaelith-AI/1.0' } });
+  if (!response.ok) return '';
+  const data = await response.json();
 
-  const replies = {
-    fast: `Réponse rapide: voici l'essentiel sur « ${prompt.slice(0, 200)} ».`,
-    normal: `Réponse normalisée: je structure une réponse claire et utile sur « ${prompt.slice(0, 300)} ».`,
-    research: `Recherche approfondie: je propose un plan web + mots-clés + sources fiables sur « ${prompt.slice(0, 300)} ».`,
-    roleplay: `Mode roleplay: je continue la scène en respectant le cadre demandé et les règles de sécurité.`,
-    coding: `Mode codage: je fournis une approche d'implémentation JavaScript/HTML orientée production pour « ${prompt.slice(0, 300)} ».`,
-    teacher: `Mode enseignant: je réponds comme un professeur, avec une explication progressive, des exemples simples et une mini-récap de la matière sur « ${prompt.slice(0, 300)} ».`
+  const snippets = [];
+  if (data.Heading) snippets.push(`Sujet: ${data.Heading}`);
+  if (data.AbstractText) snippets.push(`Résumé: ${data.AbstractText}`);
+
+  if (Array.isArray(data.RelatedTopics)) {
+    for (const topic of data.RelatedTopics.slice(0, 5)) {
+      if (typeof topic.Text === 'string') snippets.push(`- ${topic.Text}`);
+      if (Array.isArray(topic.Topics)) {
+        for (const nested of topic.Topics.slice(0, 2)) {
+          if (typeof nested.Text === 'string') snippets.push(`- ${nested.Text}`);
+        }
+      }
+    }
+  }
+
+  return snippets.join('\n').slice(0, 1800);
+}
+
+function modeInstruction(mode) {
+  const instructions = {
+    fast: 'Réponds en 3-5 phrases max, clair et direct.',
+    normal: 'Réponds naturellement comme un humain utile et bienveillant.',
+    research: 'Fais une réponse approfondie, structurée, avec points clés et limites.',
+    roleplay: 'Reste en roleplay tout en gardant cohérence et immersion.',
+    coding: 'Donne une réponse précise de développeur avec étapes concrètes.',
+    teacher: 'Explique comme un professeur: simple, progressif, avec exemples.'
   };
+  return instructions[mode] || instructions.normal;
+}
 
-  return `${replies[mode] || replies.normal}\n\n${safeNote}`;
+async function generateResponse(mode, prompt, user) {
+  const openAiKey = process.env.OPENAI_API_KEY;
+  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+
+  const needsWeb = mode === 'research' || /\b(recherche|cherche|web|source|actualité|news|latest)\b/i.test(prompt);
+  let webContext = '';
+  if (needsWeb) {
+    try {
+      webContext = await searchWebContext(prompt);
+    } catch {
+      webContext = '';
+    }
+  }
+
+  if (!openAiKey) {
+    const intro = mode === 'roleplay' ? 'Très bien, je rentre dans ton scénario.' : 'D’accord, je te réponds clairement.';
+    const webPart = webContext ? `\n\nJ'ai trouvé ces éléments sur le web:\n${webContext}` : '';
+    return `${intro}\n\nVoici ma réponse sur: ${prompt}${webPart}`;
+  }
+
+  const systemPrompt = [
+    'Tu es Vaelith, une IA conversationnelle qui répond comme un humain naturel.',
+    modeInstruction(mode),
+    user.role === 'admin'
+      ? 'Utilisateur admin: aucun filtre supplémentaire.'
+      : "Règle obligatoire: ne jamais aider à tuer/blesser quelqu'un.",
+    'Réponds dans la langue utilisée par l’utilisateur.'
+  ].join(' ');
+
+  const userPrompt = webContext
+    ? `${prompt}\n\nContexte web (à utiliser si pertinent):\n${webContext}`
+    : prompt;
+
+  const completion = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${openAiKey}`
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.8,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ]
+    })
+  });
+
+  if (!completion.ok) {
+    const fallback = await completion.text();
+    throw new Error(`Erreur provider IA: ${fallback.slice(0, 200)}`);
+  }
+
+  const payload = await completion.json();
+  const text = payload.choices?.[0]?.message?.content?.trim();
+  if (!text) throw new Error('Réponse vide du provider IA.');
+  return text;
 }
 
 function serveStatic(req, res) {
@@ -223,7 +302,7 @@ const server = http.createServer(async (req, res) => {
 
       const selected = modeConfig[mode] ? mode : 'normal';
       await sleep(modeConfig[selected].delayMs);
-      const response = generateResponse(selected, prompt, user);
+      const response = await generateResponse(selected, prompt, user);
       db.messages.push({ id: uid(), userId: user.id, prompt, response, mode: selected, createdAt: new Date().toISOString() });
       saveDb(db);
       return sendJson(res, 200, { mode: selected, modeLabel: modeConfig[selected].label, response, responseTimeMs: modeConfig[selected].delayMs });

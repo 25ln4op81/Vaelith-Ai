@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vaelith AI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" id="app-shell">
+      <aside class="sidebar" id="left-sidebar">
+        <div class="user-card">
+          <div class="avatar" id="user-avatar">?</div>
+          <div>
+            <h1 id="user-name">Invité</h1>
+            <p class="muted small" id="user-email">Non connecté</p>
+            <p class="muted small" id="user-role"></p>
+          </div>
+        </div>
+
+        <section class="card">
+          <h2>Compte</h2>
+          <p class="muted small">Connecte-toi pour discuter avec Vaelith.</p>
+          <form id="auth-form" class="stack">
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="text" id="username" placeholder="Pseudo (pour création)" />
+            <input type="password" id="password" placeholder="Mot de passe" required />
+            <div class="row">
+              <button type="button" id="register-btn" class="secondary">Créer</button>
+              <button type="submit">Connexion</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Mode</h2>
+          <select id="mode-select">
+            <option value="fast">⚡ Rapide (&lt; 5s)</option>
+            <option value="normal" selected>💬 Normal</option>
+            <option value="research">🔎 Recherche</option>
+            <option value="roleplay">🎭 Roleplay</option>
+            <option value="coding">🧠 Codage</option>
+            <option value="teacher">📘 Enseignant</option>
+          </select>
+        </section>
+
+        <section class="card">
+          <h2>Profil</h2>
+          <form id="profile-form" class="stack">
+            <input type="text" id="new-username" placeholder="Nouveau pseudo" />
+            <input type="password" id="new-password" placeholder="Nouveau mot de passe" />
+            <button type="submit">Mettre à jour</button>
+          </form>
+        </section>
+      </aside>
+
+      <section class="chat-panel">
+        <button type="button" id="toggle-left-panel" class="sidebar-toggle" aria-label="Masquer ou afficher la colonne de gauche">☰</button>
+
+        <div id="messages" class="messages">
+          <article class="msg ai">
+            Bienvenue sur Vaelith 👋<br />
+            Connecte-toi et envoie ton premier message.
+          </article>
+        </div>
+
+        <form id="chat-form" class="chat-form">
+          <label for="prompt" class="sr-only">Message</label>
+          <textarea id="prompt" placeholder="Écris ton message à Vaelith..." required></textarea>
+          <div class="chat-actions">
+            <span class="muted small">Entrée pour envoyer • Shift+Entrée pour une nouvelle ligne</span>
+            <button type="submit">Envoyer</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

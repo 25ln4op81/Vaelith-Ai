@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vaelith AI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" id="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">V</div>
+          <div>
+            <h1>Vaelith</h1>
+            <p class="muted">Assistant IA • Dark Navy</p>
+          </div>
+        </div>
+
+        <section class="card">
+          <h2>Compte</h2>
+          <p class="muted small">Connecte-toi pour discuter avec Vaelith.</p>
+          <form id="auth-form" class="stack">
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="text" id="username" placeholder="Pseudo (pour création)" />
+            <input type="password" id="password" placeholder="Mot de passe" required />
+            <div class="row">
+              <button type="button" id="register-btn" class="secondary">Créer</button>
+              <button type="submit">Connexion</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Mode</h2>
+          <select id="mode-select">
+            <option value="fast">⚡ Rapide (&lt; 5s)</option>
+            <option value="normal" selected>💬 Normal</option>
+            <option value="research">🔎 Recherche</option>
+            <option value="roleplay">🎭 Roleplay</option>
+            <option value="coding">🧠 Codage</option>
+            <option value="teacher">📘 Enseignant</option>
+          </select>
+          <p class="muted small">Chaque mode ajuste le style de réponse de Vaelith.</p>
+        </section>
+
+        <section class="card">
+          <h2>Profil</h2>
+          <form id="profile-form" class="stack">
+            <input type="text" id="new-username" placeholder="Nouveau pseudo" />
+            <input type="password" id="new-password" placeholder="Nouveau mot de passe" />
+            <button type="submit">Mettre à jour</button>
+          </form>
+        </section>
+      </aside>
+
+      <section class="chat-panel">
+        <header class="chat-header">
+          <div>
+            <h2>Conversation</h2>
+            <p id="status" class="muted">Non connecté</p>
+          </div>
+          <div class="pill-group">
+            <span class="pill">Sécurité active</span>
+            <span class="pill">Multi-modes</span>
+            <button type="button" id="toggle-right-panel" class="pill-button">Masquer panneau</button>
+          </div>
+        </header>
+
+        <div id="messages" class="messages">
+          <article class="msg ai">
+            Bienvenue sur Vaelith 👋<br />
+            Connecte-toi et envoie ton premier message.
+          </article>
+        </div>
+
+        <form id="chat-form" class="chat-form">
+          <label for="prompt" class="sr-only">Message</label>
+          <textarea id="prompt" placeholder="Écris ton message à Vaelith..." required></textarea>
+          <div class="chat-actions">
+            <span class="muted small">Entrée pour envoyer • Shift+Entrée pour une nouvelle ligne</span>
+            <button type="submit">Envoyer</button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="right-panel" id="right-panel">
+        <section class="card right-card">
+          <h2>Panneau Vaelith</h2>
+          <p class="muted small">Tu peux masquer/afficher cette colonne avec le bouton en haut de la conversation.</p>
+        </section>
+
+        <section class="card right-card">
+          <h2>Raccourcis</h2>
+          <ul class="info-list muted small">
+            <li>⚡ Rapide: réponse courte</li>
+            <li>🔎 Recherche: réponse approfondie</li>
+            <li>🧠 Codage: orienté dev</li>
+            <li>📘 Enseignant: style prof</li>
+          </ul>
+        </section>
+
+        <section class="card right-card">
+          <h2>État</h2>
+          <p class="muted small">Les messages sont sauvegardés localement dans la base JSON du projet.</p>
+        </section>
+      </aside>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
